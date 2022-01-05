@@ -22,7 +22,6 @@ i = randint(0, len(dirList)-1)
 startCount = i
 
 while True:
-
     dirName = dirList[i % len(dirList)]
     randomNum = randint(0, len(oc.list('Music/' + dirName))-1)
     fileName = (oc.list('Music/' + dirName)[randomNum]).name

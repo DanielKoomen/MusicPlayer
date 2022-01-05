@@ -1,8 +1,10 @@
-import sys, os, requests, json
+import sys, os, requests, json, threading, owncloud, vlc, time
+from playsound import PlaysoundException
 from colorthief import ColorThief
 from bs4 import BeautifulSoup
 from PIL import Image
 from io import BytesIO
+from random import randint
 
 
 def block_print():
@@ -16,15 +18,27 @@ block_print()
 import pygame
 enable_print()
 
+os.environ["VLC_VERBOSE"] = str("-1")
 
+global folder_string, file_name, skip_bool, play_bool, playlists, player, stop_program
+skip_bool = False
+play_bool = False
+stop_program = False
 
-global folder_string, file_name
-
+# color definition
 color_text = (255, 255, 255)
 red = (255, 0, 0)
 color_light = (170, 170, 170)
 color_dark = (100, 100, 100)
 
+playlists = {"CB": False, "DK": False, "JK": False}
+iterator = randint(0, len(playlists) - 1)
+start_count = iterator
+
+
+# cloud file configuration
+# oc = owncloud.Client('http://192.168.1.109')
+# oc.login('MusicLaptop', '5pzZ4-cLNTg-kj24x-8FBes-YC38R')
 
 
 def find_dominant_color():
@@ -50,20 +64,17 @@ def button(screen, position, text, color, font_size, button_size, state=False):
 
 
 def screen():
-    global folder_string, file_name
+    global folder_string, file_name, stop_program
     image_size = 500
-
     pygame.init()
-    screen = pygame.display.set_mode((1920, 1080), pygame.FULLSCREEN)
+    # screen = pygame.display.set_mode((1920, 1080), pygame.FULLSCREEN)
+    screen = pygame.display.set_mode((1920, 1080))
     image = pygame.image.load(folder_string + "/" + file_name)
     vignette = pygame.image.load("resources/vignette.png")
     vignette.set_alpha(100)
     fill_color = find_dominant_color()
     w, h = screen.get_size()
 
-    CB = False
-    DK = False
-    JK = False
     running = True
     while running:
         mouse = pygame.mouse.get_pos()
@@ -85,16 +96,16 @@ def screen():
         button_font_size = 90
         button_size = 120
         offset_y = 25
-        left = ((w / 2) - (new_size / 2))
-        right = ((w / 2) + (new_size / 2) - button_size)
-        top = (h / 2) - (new_size / 2) - offset_y - button_size
-        bottom = (h / 2) + (new_size / 2) + offset_y
+        left = ((w / 2) - (image_size / 2))
+        right = ((w / 2) + (image_size / 2) - button_size)
+        top = (h / 2) - (image_size / 2) - offset_y - button_size
+        bottom = (h / 2) + (image_size / 2) + offset_y
         offset_x = (right - left) / 2
 
         # creating buttons
-        CB_button = button(screen, (left, top), "CB", color_dark, button_font_size, button_size, CB)
-        DK_button = button(screen, (left + offset_x, top), "DK", color_dark, button_font_size, button_size, DK)
-        JK_button = button(screen, (right, top), "JK", color_dark, button_font_size, button_size, JK)
+        CB_button = button(screen, (left, top), "CB", color_dark, button_font_size, button_size, playlists["CB"])
+        DK_button = button(screen, (left + offset_x, top), "DK", color_dark, button_font_size, button_size, playlists["DK"])
+        JK_button = button(screen, (right, top), "JK", color_dark, button_font_size, button_size, playlists["JK"])
 
         back_button = button(screen, (left, bottom), "\u23EE", color_dark, button_font_size, button_size)
         pp_button = button(screen, (left + offset_x, bottom), "\u23EF", color_dark, button_font_size, button_size)
@@ -102,11 +113,11 @@ def screen():
 
         # hoovering for buttons
         if (CB_button.collidepoint(mouse)):
-            CB_button = button(screen, (left, top), "CB", color_light, button_font_size, button_size, CB)
+            CB_button = button(screen, (left, top), "CB", color_light, button_font_size, button_size, playlists["CB"])
         if (DK_button.collidepoint(mouse)):
-            DK_button = button(screen, (left + offset_x, top), "DK", color_light, button_font_size, button_size, DK)
+            DK_button = button(screen, (left + offset_x, top), "DK", color_light, button_font_size, button_size, playlists["DK"])
         if (JK_button.collidepoint(mouse)):
-            JK_button = button(screen, (right, top), "JK", color_light, button_font_size, button_size, JK)
+            JK_button = button(screen, (right, top), "JK", color_light, button_font_size, button_size, playlists["JK"])
 
         if (back_button.collidepoint(mouse)):
             back_button = button(screen, (left, bottom), "\u23EE", color_light, button_font_size, button_size)
@@ -124,15 +135,15 @@ def screen():
                     running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if (CB_button.collidepoint(mouse)):
-                    CB = False if CB else True
+                    playlists["CB"] = False if playlists["CB"] else True
                 if (DK_button.collidepoint(mouse)):
-                    DK = False if DK else True
+                    playlists["DK"] = False if playlists["DK"] else True
                 if (JK_button.collidepoint(mouse)):
-                    JK = False if JK else True
+                    playlists["JK"] = False if playlists["JK"] else True
 
         pygame.display.update()
-
     pygame.quit()
+    stop_program = True
 
 
 def download_image(search):
@@ -161,15 +172,56 @@ def download_image(search):
     file_name = title
 
 
+def input_function():
+    input()
+    global skip_bool
+    skip_bool = True
+    player.stop()
+
+
+def play_music():
+    global stop_program
+    print("hallo")
+    while not stop_program:
+        print("hoi")
+        for x in playlists:
+            print(playlists[x])
+        print(playlists)
+        # dirName = dirList[iterator % len(dirList)]
+        # randomNum = randint(0, len(oc.list('Music/' + dirName))-1)
+        # fileName = (oc.list('Music/' + dirName)[randomNum]).name
+        # oc.get_file('Music/' + dirName + "/" + fileName, 'temp.mp3')
+        # loc = os.path.dirname(os.path.realpath(__file__))
+        # print("Currently playing: \"" + fileName.rstrip(".mp3") +"\" from folder " + dirName + ", " + str(i - startCount + 1) + " played in this sesh.")
+        # start_time = time.time()
+        # player = vlc.MediaPlayer('temp.mp3')
+        # player.play()
+
+        # time.sleep(0.5)
+        # duration = player.get_length()/1000
+        # thread = threading.Thread(target=input_function())
+        # thread.start()
+        # while(skip_bool == False and ((time.time() - start_time) < duration)):
+        #     pass
+        # player.stop()
+        # skip_bool = False
+        # i += 1
+
 def main():
     global folder_string, file_name
-    search = "Sultans of swing dire straits"
+    search = "jasper knol"
     try:
         download_image(search)
     except:
         folder_string = "./resources"
         file_name = "Raphson.PNG"
-    screen()
+
+    screen_thread = threading.Thread(target=screen())
+    music_thread = threading.Thread(target=play_music())
+    print("hey")
+    music_thread.start()
+    screen_thread.start()
+
 
 
 if __name__ == '__main__':
