@@ -1,3 +1,4 @@
+from multiprocessing.connection import wait
 import threading, os, owncloud, time, vlc, requests, json, webcolors, tkinter as tk
 import tkinter.font as font
 from tkinter.constants import CENTER, NW, SE, W
@@ -135,12 +136,21 @@ def start_music():
         time.sleep(0.5)
         duration = player.get_length() / 1000
 
-        while(skip_bool == False and ((time.time() - start_time) < duration)):
-            duration_label = tk.Label(window, text=duration - (time.time() - start_time))
-            duration_label.place(x=screen_width / 2, y=screen_height - offset_y, anchor=CENTER)
-            time.sleep(1)
-            duration_label.destroy()
-            # pass
+        time_played = time.time() - start_time
+        while(skip_bool == False and (time_played < duration)):
+            print(time_played)
+            if (pp_bool == True):
+                duration_label = tk.Label(window, text=duration - time_played)
+                duration_label.place(x=screen_width / 2, y=screen_height - offset_y, anchor=CENTER)
+                time.sleep(1)
+                duration_label.destroy()
+                time_played = time.time() - start_time
+            else:
+                duration_label = tk.Label(window, text=duration - time_played)
+                duration_label.place(x=screen_width / 2, y=screen_height - offset_y, anchor=CENTER)
+                time.sleep(1)
+                duration_label.destroy()
+                start_time += 1
         player.stop()
         text_label1.destroy()
         text_label2.destroy()
