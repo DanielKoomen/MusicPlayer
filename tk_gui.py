@@ -68,8 +68,8 @@ def start_music():
     global skip_bool, stop_bool, player, file_name, file_location, window
     global image_title, screen_width, screen_heigth, image_size, playlists
 
-    oc = owncloud.Client('http://192.168.1.109')
-    oc.login('MusicLaptop', '5pzZ4-cLNTg-kj24x-8FBes-YC38R')
+    # oc = owncloud.Client('http://192.168.1.109')
+    # oc.login('MusicLaptop', '5pzZ4-cLNTg-kj24x-8FBes-YC38R')
 
     i = randint(0, len(playlists) - 1)
     startCount = i
@@ -86,23 +86,24 @@ def start_music():
         if (len(dir_list) > 0):
             dir_name = dir_list[i % len(dir_list)]
 
-        # if (dir_name == 'CB'):
-        #     file_name = "82_44 Hall & Oates - Private Eyes.mp3"
-        # # file_name = "179 Herman Brood & His Wild Romance - Saturday Night.mp3"
+        if (dir_name == 'CB'):
+            file_name = "82_44 Hall & Oates - Private Eyes.mp3"
+            # file_name = "179 Herman Brood & His Wild Romance - Saturday Night.mp3"
 
-        # if (dir_name == 'DK'):
-        #     # file_name = "07 R.E.M. - Losing My Religion.mp3"
-        #     file_name = "1972-27 - America - Horse With No Name.mp3"
+        if (dir_name == 'DK'):
+            # file_name = "07 R.E.M. - Losing My Religion.mp3"
+            file_name = "1972-27 - America - Horse With No Name.mp3"
 
-        # if (dir_name == 'JK'):
-        #     # file_name = "22 Metallica - Nothing Else Matters.mp3"
-        #     file_name = "134 John Par - St. Elmo's Fire.mp3"
+        if (dir_name == 'JK'):
+            # file_name = "22 Metallica - Nothing Else Matters.mp3"
+            file_name = "134 John Par - St. Elmo's Fire.mp3"
 
 
         # dir_name = dirList[i % len(dirList)]
-        random_num = randint(0, len(oc.list('Music/' + dir_name))-1)
-        file_name = (oc.list('Music/' + dir_name)[random_num]).name
-        oc.get_file('Music/' + dir_name + "/" + file_name, 'temp.mp3')
+
+        # random_num = randint(0, len(oc.list('Music/' + dir_name))-1)
+        # file_name = (oc.list('Music/' + dir_name)[random_num]).name
+        # oc.get_file('Music/' + dir_name + "/" + file_name, 'temp.mp3')
 
 
         # Download and print image in center of screen.
@@ -125,13 +126,10 @@ def start_music():
         text_label2 = tk.Label(window, text="Previously played: \"" + previous_file_name.rstrip(".mp3") + "\"")
         text_label2.place(x=offset_y, y=screen_height / 2, anchor=W)
 
-
-        # #loc = os.path.dir_name(os.path.realpath(__file__))
         print("Currently playing: \"" + file_name.rstrip(".mp3") +"\" from folder " + dir_name + ", " + str(i - startCount + 1) + " played in this sesh.")
-        # playsound(loc+'/temp.mp3')
         start_time = time.time()
-        player = vlc.MediaPlayer('temp.mp3')
-        # player = vlc.MediaPlayer("Music/" + dir_name + "/" + file_name)
+        # player = vlc.MediaPlayer('temp.mp3')
+        player = vlc.MediaPlayer("Music/" + dir_name + "/" + file_name)
         player.play()
 
         time.sleep(0.5)
