@@ -155,6 +155,7 @@ def start_music():
         text_label1.destroy()
         text_label2.destroy()
         skip_bool = False
+        #ff iets toevoegen
         i += 1
         previous_file_name = file_name
 
