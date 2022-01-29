@@ -1,6 +1,6 @@
 from multiprocessing.connection import wait
 import threading, os, owncloud, time, vlc, requests, json, webcolors, tkinter as tk
-import tkinter.font as font
+import tkinter.font as font, pyautogui
 from tkinter.constants import CENTER, NW, SE, W
 from random import randint
 from bs4 import BeautifulSoup
@@ -19,10 +19,11 @@ skip_bool = False
 stop_bool = True
 image_title = "Raphson.PNG"
 
-screen_width = 1920
-screen_height = 1080
-image_size = 500
-button_size = 120
+# screen_width = 1920
+# screen_height = 1080
+screen_width, screen_height = pyautogui.size()
+image_size = int(screen_height / 3)
+button_size = int(image_size / 4)
 offset_y = 25
 left = ((screen_width / 2) - (image_size / 2))
 right = ((screen_width / 2) + (image_size / 2)) - button_size - 27.5
@@ -67,7 +68,7 @@ def find_dominant_color():
 
 def start_music():
     global skip_bool, stop_bool, player, file_name, file_location, window
-    global image_title, screen_width, screen_heigth, image_size, playlists
+    global image_title, screen_width, screen_height, image_size, playlists
 
     # oc = owncloud.Client('http://192.168.1.109')
     # oc.login('MusicLaptop', '5pzZ4-cLNTg-kj24x-8FBes-YC38R')
@@ -138,7 +139,6 @@ def start_music():
 
         time_played = time.time() - start_time
         while(skip_bool == False and (time_played < duration)):
-            print(time_played)
             if (pp_bool == True):
                 duration_label = tk.Label(window, text=duration - time_played)
                 duration_label.place(x=screen_width / 2, y=screen_height - offset_y, anchor=CENTER)
@@ -155,7 +155,6 @@ def start_music():
         text_label1.destroy()
         text_label2.destroy()
         skip_bool = False
-        #ff iets toevoegen
         i += 1
         previous_file_name = file_name
 
@@ -215,7 +214,8 @@ def skip():
 
 if __name__ == '__main__':
     window = tk.Tk()
-    window.geometry("1920x1080")
+    screen_size = str(screen_width) + "x" + str(screen_height)
+    window.geometry(screen_size)
     window.attributes("-fullscreen", True)
     window.bind("<Escape>", close)
 
