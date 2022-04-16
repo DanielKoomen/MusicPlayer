@@ -11,8 +11,7 @@ from colorthief import ColorThief
 
 global player, skip_bool, stop_bool, pp_bool
 global file_name, file_location, image_title, playlists, previous_file_name
-# global window, screen_width, screen_height, image_size, button_size
-# global CB_button, DK_button, JK_button
+
 
 pp_bool = True
 skip_bool = False
@@ -88,21 +87,6 @@ def start_music():
         if (len(dir_list) > 0):
             dir_name = dir_list[i % len(dir_list)]
 
-        # if (dir_name == 'CB'):
-        #     file_name = "82_44 Hall & Oates - Private Eyes.mp3"
-        #     # file_name = "179 Herman Brood & His Wild Romance - Saturday Night.mp3"
-
-        # if (dir_name == 'DK'):
-        #     # file_name = "07 R.E.M. - Losing My Religion.mp3"
-        #     file_name = "1972-27 - America - Horse With No Name.mp3"
-
-        # if (dir_name == 'JK'):
-        #     # file_name = "22 Metallica - Nothing Else Matters.mp3"
-        #     file_name = "134 John Par - St. Elmo's Fire.mp3"
-
-
-        # dir_name = dirList[i % len(dirList)]
-
         random_num = randint(0, len(oc.list('Music/' + dir_name))-1)
         file_name = (oc.list('Music/' + dir_name)[random_num]).name
         oc.get_file('Music/' + dir_name + "/" + file_name, 'temp.mp3')
@@ -131,7 +115,6 @@ def start_music():
         print("Currently playing: \"" + file_name.rstrip(".mp3") +"\" from folder " + dir_name + ", " + str(i - startCount + 1) + " played in this sesh.")
         start_time = time.time()
         player = vlc.MediaPlayer('temp.mp3')
-        # player = vlc.MediaPlayer("Music/" + dir_name + "/" + file_name)
         player.play()
 
         time.sleep(0.5)
@@ -220,7 +203,7 @@ if __name__ == '__main__':
     window.bind("<Escape>", close)
 
     # vignette = tk.PhotoImage(file="resources/vignette.png")
-    # background_label = tk.Label(window, image=vignette, width=screen_width, height=screen_height)
+    # background_label = tk.Label(window, image=vignette)
     # background_label.pack()
 
     music_thread = threading.Thread(target=start_music)
