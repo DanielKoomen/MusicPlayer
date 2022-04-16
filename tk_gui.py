@@ -197,6 +197,7 @@ def skip():
 
 if __name__ == '__main__':
     window = tk.Tk()
+    window.title("Super fancy music player")
     screen_size = str(screen_width) + "x" + str(screen_height)
     window.geometry(screen_size)
     # window.attributes("-fullscreen", True)
