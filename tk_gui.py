@@ -19,9 +19,9 @@ skip_bool = False
 stop_bool = True
 image_title = "Raphson.PNG"
 
-# screen_width = 1920
-# screen_height = 1080
-screen_width, screen_height = pyautogui.size()
+screen_width = 1920
+screen_height = 1080
+# screen_width, screen_height = pyautogui.size()
 image_size = int(screen_height / 3)
 button_size = int(image_size / 4)
 offset_y = 25
@@ -70,8 +70,8 @@ def start_music():
     global skip_bool, stop_bool, player, file_name, file_location, window
     global image_title, screen_width, screen_height, image_size, playlists
 
-    # oc = owncloud.Client('http://192.168.1.109')
-    # oc.login('MusicLaptop', '5pzZ4-cLNTg-kj24x-8FBes-YC38R')
+    oc = owncloud.Client('http://raphson.rkslot.nl')
+    oc.login('MusicLaptop', '5pzZ4-cLNTg-kj24x-8FBes-YC38R')
 
     i = randint(0, len(playlists) - 1)
     startCount = i
@@ -88,24 +88,24 @@ def start_music():
         if (len(dir_list) > 0):
             dir_name = dir_list[i % len(dir_list)]
 
-        if (dir_name == 'CB'):
-            file_name = "82_44 Hall & Oates - Private Eyes.mp3"
-            # file_name = "179 Herman Brood & His Wild Romance - Saturday Night.mp3"
+        # if (dir_name == 'CB'):
+        #     file_name = "82_44 Hall & Oates - Private Eyes.mp3"
+        #     # file_name = "179 Herman Brood & His Wild Romance - Saturday Night.mp3"
 
-        if (dir_name == 'DK'):
-            # file_name = "07 R.E.M. - Losing My Religion.mp3"
-            file_name = "1972-27 - America - Horse With No Name.mp3"
+        # if (dir_name == 'DK'):
+        #     # file_name = "07 R.E.M. - Losing My Religion.mp3"
+        #     file_name = "1972-27 - America - Horse With No Name.mp3"
 
-        if (dir_name == 'JK'):
-            # file_name = "22 Metallica - Nothing Else Matters.mp3"
-            file_name = "134 John Par - St. Elmo's Fire.mp3"
+        # if (dir_name == 'JK'):
+        #     # file_name = "22 Metallica - Nothing Else Matters.mp3"
+        #     file_name = "134 John Par - St. Elmo's Fire.mp3"
 
 
         # dir_name = dirList[i % len(dirList)]
 
-        # random_num = randint(0, len(oc.list('Music/' + dir_name))-1)
-        # file_name = (oc.list('Music/' + dir_name)[random_num]).name
-        # oc.get_file('Music/' + dir_name + "/" + file_name, 'temp.mp3')
+        random_num = randint(0, len(oc.list('Music/' + dir_name))-1)
+        file_name = (oc.list('Music/' + dir_name)[random_num]).name
+        oc.get_file('Music/' + dir_name + "/" + file_name, 'temp.mp3')
 
 
         # Download and print image in center of screen.
@@ -130,8 +130,8 @@ def start_music():
 
         print("Currently playing: \"" + file_name.rstrip(".mp3") +"\" from folder " + dir_name + ", " + str(i - startCount + 1) + " played in this sesh.")
         start_time = time.time()
-        # player = vlc.MediaPlayer('temp.mp3')
-        player = vlc.MediaPlayer("Music/" + dir_name + "/" + file_name)
+        player = vlc.MediaPlayer('temp.mp3')
+        # player = vlc.MediaPlayer("Music/" + dir_name + "/" + file_name)
         player.play()
 
         time.sleep(0.5)
@@ -216,7 +216,7 @@ if __name__ == '__main__':
     window = tk.Tk()
     screen_size = str(screen_width) + "x" + str(screen_height)
     window.geometry(screen_size)
-    window.attributes("-fullscreen", True)
+    # window.attributes("-fullscreen", True)
     window.bind("<Escape>", close)
 
     # vignette = tk.PhotoImage(file="resources/vignette.png")
