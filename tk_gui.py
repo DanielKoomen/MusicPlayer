@@ -17,8 +17,8 @@ pp_bool = True
 skip_bool = False
 stop_bool = True
 
-screen_width = 1920
-screen_height = 1080
+screen_width = 1366
+screen_height = 768
 # screen_width, screen_height = pyautogui.size()
 image_size = int(screen_height / 3)
 button_size = int(image_size / 4)
