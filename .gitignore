@@ -1,2 +1,3 @@
 *.mp3
 scraped_images/temp.*
+__pycache__/
