@@ -1,0 +1,5 @@
+pyocclient
+python-vlc
+webcolors
+pyautogui
+colorthief

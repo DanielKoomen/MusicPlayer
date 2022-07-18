@@ -10,13 +10,12 @@ from colorthief import ColorThief
 
 
 global player, skip_bool, stop_bool, pp_bool
-global file_name, file_location, image_title, playlists, previous_file_name
+global file_name, file_location, playlists, previous_file_name
 
 
 pp_bool = True
 skip_bool = False
 stop_bool = True
-image_title = "Raphson.PNG"
 
 screen_width = 1920
 screen_height = 1080
@@ -33,34 +32,32 @@ offset_x = (right - left) / 2
 playlists = {"CB" : True, "DK" : True, "JK" : True}
 
 
-def download_image(search):
-    global image_title, window
-    url = "https://www.bing.com/images/search"
+def get_image(search):
+    try:
+        url = "https://www.bing.com/images/search"
 
-    headers = {
-        "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:80.0) Gecko/20100101 Firefox/80.0"
-    }
-    params = {"q": search.rstrip(".mp3"), "form": "HDRSC2", "first": "1", "scenario": "ImageBasicHover"}
-    r = requests.get(url, headers=headers, params=params)
+        headers = {
+            "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:80.0) Gecko/20100101 Firefox/80.0"
+        }
+        params = {"q": search.rstrip(".mp3"), "form": "HDRSC2", "first": "1", "scenario": "ImageBasicHover"}
+        r = requests.get(url, headers=headers, params=params)
 
-    soup = BeautifulSoup(r.text, "html.parser")
+        soup = BeautifulSoup(r.text, "html.parser")
 
-    data = soup.find_all("a", {"class": "iusc"})[0]
-    json_data = json.loads(data["m"])
-    img_link = json_data["murl"]
-    img_object = requests.get(img_link, headers=headers)
-    title = img_link.split("/")[-1]
-    title = "temp." + title.split(".")[-1]
+        data = soup.find_all("a", {"class": "iusc"})[0]
+        json_data = json.loads(data["m"])
+        img_link = json_data["murl"]
+        r = requests.get(img_link, headers=headers)
+        return r.content
 
-    img = Image.open(BytesIO(img_object.content))
-    img.save("./scraped_images/" + title)
-
-    image_title = title
+    except:
+        with open('scraped_images/Raphson.PNG', 'rb') as f:
+            return f.readall()
 
 
-def find_dominant_color():
-    global image_title
-    color_thief = ColorThief("scraped_images/" + image_title)
+
+def find_dominant_color(image):
+    color_thief = ColorThief(BytesIO(image))
     dominant_color = color_thief.get_color(quality=1)
     return webcolors.rgb_to_hex(dominant_color)
 
@@ -87,23 +84,20 @@ def start_music():
         if (len(dir_list) > 0):
             dir_name = dir_list[i % len(dir_list)]
 
+        print('Download music')
+
         random_num = randint(0, len(oc.list('Music/' + dir_name))-1)
         file_name = (oc.list('Music/' + dir_name)[random_num]).name
         oc.get_file('Music/' + dir_name + "/" + file_name, 'temp.mp3')
 
-
         # Download and print image in center of screen.
-        try:
-            download_image(file_name)
-        except:
-            image_title = "Raphson.PNG"
-        window.configure(bg=find_dominant_color())
+        print('Download image')
+        img = get_image(file_name)
+        window.configure(bg=find_dominant_color(img))
 
-        img = Image.open("scraped_images/" + image_title)
-        img = img.resize((image_size, image_size))
-        img = ImageTk.PhotoImage(img)
+        tk_img = ImageTk.PhotoImage(Image.open(BytesIO(img)).resize((image_size, image_size)))
 
-        label = tk.Label(window, image=img, bd=-2)
+        label = tk.Label(window, image=tk_img, bd=-2)
         label.place(x=screen_width / 2, y=screen_height / 2, anchor=CENTER)
 
         text_label1 = tk.Label(window, text="Currently playing: \"" + file_name.rstrip(".mp3") +"\" from folder " + dir_name + ", " + str(i - startCount + 1) + " played in this sesh.")
