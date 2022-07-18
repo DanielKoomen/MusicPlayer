@@ -217,13 +217,13 @@ if __name__ == '__main__':
     JK_button = tk.Button(window, text="JK", font=button_font, command=lambda : change_state("JK"), bd=-2)
     JK_button.config(height=button_size, width=button_size, bg='green', activebackground='green', image=empty_img, compound=CENTER)
 
-    RW_button = tk.Button(window, text='\u23EE', font=button_font, bd=-2)
+    RW_button = tk.Button(window, text='RW', font=button_font, bd=-2)
     RW_button.config(height=button_size, width=button_size, image=empty_img, compound=CENTER)
 
-    PP_button = tk.Button(window, text='\u23EF', font=button_font, command=play_pause, bd=-2)
+    PP_button = tk.Button(window, text='PP', font=button_font, command=play_pause, bd=-2)
     PP_button.config(height=button_size, width=button_size, image=empty_img, compound=CENTER)
 
-    FF_button = tk.Button(window, text='\u23ED', font=button_font, command=skip, bd=-2)
+    FF_button = tk.Button(window, text='FF', font=button_font, command=skip, bd=-2)
     FF_button.config(height=button_size, width=button_size, image=empty_img, compound=CENTER)
 
     # placing buttons
